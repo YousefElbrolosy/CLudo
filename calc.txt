@@ -1,4 +1,0 @@
-Big Box = 225x225
-small = 40x40
-
-initialy = 108

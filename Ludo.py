@@ -23,7 +23,7 @@ yellow   = pygame.image.load('yellow.png')
 
 color    = [red, green, yellow, blue]
 number   = 1
-currentPlayer = 3
+currentPlayer = 0
 playerKilled = False
 diceRolled = False
 
@@ -46,16 +46,11 @@ jump     = {(202, 240): (240, 202),
 
 
 def move_token(x, y):
-    flag=True
-    for i in range(len(HOME)):
-        if tuple(position[x][y]) in HOME[i]:
-            flag=False
-            if number == 6:
-                position[x][y] = list(SAFE[i])
-                diceRolled = False
-                break
+    global currentPlayer
+    if tuple(position[x][y]) in HOME[currentPlayer] and number == 6:
+            position[x][y] = list(SAFE[currentPlayer])
 
-    if flag:
+    elif tuple(position[x][y]) not in HOME[currentPlayer]:
         for _ in range(number):
 
             #  R1,Y3
@@ -108,16 +103,13 @@ def move_token(x, y):
                         position[x][y] = list(jump[i])
                         break
 
-        if tuple(position[x][y]) not in SAFE:
-            for i in range(len(position)):
-                for j in range(len(position[i])):
-                    if position[i][j] == position[x][y] and i != x:
-                        position[i][j] = list(HOME[i][j])
-                        currentPlayer = (currentPlayer + 3) % 4
-                        playerKilled = True
+        # if tuple(position[x][y]) not in SAFE:
+        #     for i in range(len(position)):
+        #         for j in range(len(position[i])):
+        #             if position[i][j] == position[x][y] and i != x:
+        #                 position[i][j] = list(HOME[i][j])
+        #                 playerKilled = True
 
-        diceRolled = False
-            
 
 running = True
 while(running):
@@ -129,25 +121,22 @@ while(running):
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             coordinate = pygame.mouse.get_pos()
-            if (605 <= coordinate[0] <= 669) and (270 <= coordinate[1] <= 334) and diceRolled == False:
+            if (605 <= coordinate[0] <= 669) and (270 <= coordinate[1] <= 334):
                 number = random.randint(1, 6)
-                if number != 6 or playerKilled == True:
-                    currentPlayer = (currentPlayer + 1) % 4
-                for i in position[currentPlayer]:
-                    if tuple(i) not in HOME[currentPlayer]:
-                        diceRolled = True
 
             else:
-                for i in range(len(position)):
-                    for j in range(len(position[i])):
-                        if position[i][j][0] <= coordinate[0] <= position[i][j][0]+31 and position[i][j][1] <= coordinate[1] <= position[i][j][1]+31:
-                            move_token(i, j)
+                for j in range(len(position[currentPlayer])):
+                    if position[currentPlayer][j][0] <= coordinate[0] <= position[currentPlayer][j][0]+31 \
+                      and position[currentPlayer][j][1] <= coordinate[1] <= position[currentPlayer][j][1]+31:
+                        move_token(currentPlayer, j)
 
     screen.blit(DICE[number-1], (605, 270))
 
     for i in range(len(position)):
         for j in position[i]:
             screen.blit(color[i], j)
+
+    screen.blit(color[currentPlayer], (600, 8))
     
 
     pygame.display.update()

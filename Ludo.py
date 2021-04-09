@@ -46,11 +46,17 @@ jump     = {(202, 240): (240, 202),
 
 
 def move_token(x, y):
-    global currentPlayer
+    global currentPlayer,diceRolled
     if tuple(position[x][y]) in HOME[currentPlayer] and number == 6:
             position[x][y] = list(SAFE[currentPlayer])
+            diceRolled=False
+
+
 
     elif tuple(position[x][y]) not in HOME[currentPlayer]:
+        diceRolled=False
+        if not number==6 :
+            currentPlayer=(currentPlayer+1)%4
         for _ in range(number):
 
             #  R1,Y3
@@ -103,12 +109,13 @@ def move_token(x, y):
                         position[x][y] = list(jump[i])
                         break
 
-        # if tuple(position[x][y]) not in SAFE:
-        #     for i in range(len(position)):
-        #         for j in range(len(position[i])):
-        #             if position[i][j] == position[x][y] and i != x:
-        #                 position[i][j] = list(HOME[i][j])
-        #                 playerKilled = True
+        if tuple(position[x][y]) not in SAFE:
+            for i in range(len(position)):
+                for j in range(len(position[i])):
+                    if position[i][j] == position[x][y] and i != x:
+                        position[i][j] = list(HOME[i][j])
+                        playerKilled = True
+                        currentPlayer=(currentPlayer+3)%4
 
 
 running = True
@@ -121,14 +128,25 @@ while(running):
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             coordinate = pygame.mouse.get_pos()
-            if (605 <= coordinate[0] <= 669) and (270 <= coordinate[1] <= 334):
+            if not diceRolled and (605 <= coordinate[0] <= 669) and (270 <= coordinate[1] <= 334) :
                 number = random.randint(1, 6)
+                flag=True
+                for i in position[currentPlayer]:
+                    if tuple(i) not in HOME[currentPlayer]:
+                        flag=False
+                if (flag and number==6 ) or not flag:
+                    diceRolled=True
 
-            else:
+                else:
+                    currentPlayer=(currentPlayer+1)%4
+            
+
+            elif diceRolled:
                 for j in range(len(position[currentPlayer])):
                     if position[currentPlayer][j][0] <= coordinate[0] <= position[currentPlayer][j][0]+31 \
                       and position[currentPlayer][j][1] <= coordinate[1] <= position[currentPlayer][j][1]+31:
                         move_token(currentPlayer, j)
+                       
 
     screen.blit(DICE[number-1], (605, 270))
 

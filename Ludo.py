@@ -6,6 +6,11 @@
                         /_ _ _/  \_ _ _ /  /_ _ _/   \_ _ /
 '''
 
+
+       # 1- improve Capturing Mechanism (implemented)
+       # 2- Go back to home when captured (implemented)
+       # 3- Can't be captured in star areas nor safe zones (implemented)
+       # 4- WHAT NEEDS TO BE IMPLEMENTED IS WHENEVER SAME COLOR PEACE IS ON ONE OF THE CELLS WITH ARROW WITH ITS COLOR (MOVE ALONG ITS SAME LINE
 # Importing Modules
 
 import pygame
